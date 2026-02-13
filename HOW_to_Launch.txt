@@ -1,0 +1,153 @@
+🧱 STEP 1 — Setup Database
+1️⃣ Create DB
+
+Open phpMyAdmin → Import:
+
+/database/pcse_schema.sql
+
+
+Or manually:
+
+CREATE DATABASE astraal_lxp;
+USE astraal_lxp;
+-- paste schema
+
+2️⃣ Update DB Credentials
+
+Edit:
+
+/public_html/config/db.php
+
+
+And:
+
+/python/content_sequencer.py
+
+
+Replace:
+
+host="localhost"
+user="db_user"
+password="db_password"
+database="astraal_lxp"
+
+
+With your real DB credentials.
+
+🐍 STEP 2 — Train ML Model (ONE TIME)
+
+Go inside:
+
+/python/
+
+
+Install dependencies:
+
+pip install mysql-connector-python pandas scikit-learn
+
+
+Then train:
+
+python train_sequencer.py
+
+
+This creates:
+
+sequencer.pkl
+
+
+You do this once unless retraining.
+
+▶ STEP 3 — Execute Sequencer
+
+You have 3 ways.
+
+OPTION A — Direct CLI (Recommended for Testing)
+
+From inside /python/:
+
+python content_sequencer.py 1 1
+
+
+Where:
+
+1 = learner_id
+1 = course_id
+
+
+After execution:
+
+Check DB table:
+
+personalized_sequence
+
+
+You should see ranked rows.
+
+OPTION B — Via PHP (Production Mode)
+
+Open browser:
+
+http://localhost/astraal-pcse/public_html/sequencing/trigger_sequence.php?course_id=1
+
+
+Or on GoDaddy:
+
+https://yourdomain.com/sequencing/trigger_sequence.php?course_id=1
+
+
+PHP runs:
+
+exec("python3 /home/username/python/content_sequencer.py $learner_id $course_id");
+
+
+Then loads course_view.php.
+
+OPTION C — Cron (Automatic)
+On GoDaddy:
+
+cPanel → Cron Jobs
+
+Add:
+
+php /home/username/public_html/cron/nightly_sequencing.php
+
+
+Set schedule.
+
+🔎 VERIFY IT WORKS
+
+Check:
+
+SELECT * FROM personalized_sequence;
+
+
+You should see:
+
+learner_id | course_id | unit_id | rank_position
+
+🧪 QUICK TEST DATA (Insert Sample Units)
+INSERT INTO content_units
+(course_id, unit_title, difficulty_level, estimated_time)
+VALUES
+(1,'Intro to AI',0.2,30),
+(1,'Machine Learning Basics',0.5,45),
+(1,'Deep Learning Intro',0.8,60);
+
+
+Then execute:
+
+python content_sequencer.py 1 1
+
+⚠ COMMON ERRORS
+1️⃣ “python3 not found” (GoDaddy)
+
+Use full path:
+
+exec("/usr/local/bin/python3 /home/username/python/content_sequencer.py 1 1");
+
+2️⃣ Permission denied
+
+Run:
+
+chmod +x content_sequencer.py

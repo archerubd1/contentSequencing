@@ -1,0 +1,46 @@
+
+
+APP Flow 
+
+
+
+astraal-pcse/
+│
+├── database/
+│   └── pcse_schema.sql
+│
+├── public_html/
+│   ├── config/
+│   │   └── db.php
+│   │
+│   ├── sequencing/
+│   │   ├── course_view.php
+│   │   ├── trigger_sequence.php
+│   │   └── toggle_mode.php
+│   │
+│   ├── faculty/
+│   │   ├── sequencing_settings.php
+│   │   └── save_settings.php
+│   │
+│   └── dashboard.php
+│
+├── python/
+│   ├── train_sequencer.py
+│   ├── content_sequencer.py
+│   ├── rl_update.py
+│   ├── sequencer.pkl
+│   └── training_data.csv
+│
+└── cron/
+    ├── weekly_rl_update.php
+    └── nightly_sequencing.php
+
+
+
+
+
+Libraries 
+
+
+
+pip install mysql-connector-python pandas scikit-learn
